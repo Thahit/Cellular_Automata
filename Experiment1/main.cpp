@@ -2,9 +2,6 @@
 #include <map>
 #include <bits/stdc++.h>
 
-#include <algorithm>
-#include <iterator>
-
 const int size = 30;
 
 void printArray(std::array<int,size>& arr){
@@ -41,28 +38,28 @@ std::array<int,size> step_with_number_thresholds(std::array<int,size>& arr, int 
 }
 
 /**
- * deciding the outcome by having ab outcome state for every combination
+ * map for every unique combination of neighbours
 **/
 int NewState(int left, int center, int right){
     std::vector<int> neighbours {left, center, right};
-    std::map<std::vector<int>, int> state_map = {
-        {{0,0,0}, 1},
-        {{0,0,1}, 0},
+    std::map<std::vector<int>, int> state_map = {// currently rule 30
+        {{0,0,0}, 0},
+        {{0,0,1}, 1},
         {{0,1,0}, 1},
         {{0,1,1}, 1},
-        {{1,0,0}, 0},
+        {{1,0,0}, 1},
         {{1,0,1}, 0},
-        {{1,1,0}, 1},
+        {{1,1,0}, 0},
         {{1,1,1}, 0},
     };
     return state_map[neighbours] ? state_map[neighbours]:0;
 }
 
 /**
- * deciding the outcome by counting the number of neighbours
+ * deciding the outcome by having ab outcome state for every combination
 **/
-int * step_with_defined_for_all(int *arr){   
-    static int output [size] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+std::array<int,size> step_with_defined_for_all(std::array<int,size>& arr){   
+    std::array<int,size> output = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
     for (size_t i = 0; i < size; i++) {
         output[i] = NewState(arr[(i-1) %size], arr[(i) %size], arr[(i+1) %size]);
@@ -70,18 +67,18 @@ int * step_with_defined_for_all(int *arr){
     return output;
 }
 
-
 int main(){
     std::array<int,size> world = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
     std::cout << "Initial state:\n";
     printArray(world);
-    int number_of_rounds = 10;
+    int number_of_rounds = 20;
     int neighbourhood = 3;
     std::cout << "Simulation (number of rounds: " <<number_of_rounds  << "):\n";
 
     for (size_t round = 0; round < number_of_rounds; round++){
-        world = step_with_number_thresholds(world, neighbourhood);
+        //world = step_with_number_thresholds(world, neighbourhood);
+        world = step_with_defined_for_all(world);
         printArray(world);
     }
 
